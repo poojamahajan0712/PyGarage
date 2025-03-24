@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Hashtag Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Wedding Hashtag Generator 💍</h1>
+        
+        <label>Partner 1 Name:</label>
+        <input type="text" id="name1" placeholder="Enter Partner 1 name">
+
+        <label>Partner 2 Name:</label>
+        <input type="text" id="name2" placeholder="Enter Partner 2 name">
+
+        <button onclick="generateHashtags()">Generate Hashtags</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function generateHashtags() {
+            const name1 = document.getElementById("name1").value;
+            const name2 = document.getElementById("name2").value;
+           
+            if (!name1 || !name2) {
+                alert("Please enter both names!");
+                return;
+            }
+
+            const response = await fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name1, name2})
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "<h3>Your Wedding Hashtags:</h3>";
+
+            data.hashtags.forEach(tag => {
+                resultDiv.innerHTML += `<p>${tag} <button onclick="copyText('${tag}')">Copy</button></p>`;
+            });
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Copied: " + text);
+        }
+    </script>
+</body>
+</html>
